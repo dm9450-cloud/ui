@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" ng-app="DevOpsUI">
+  <head>
+    <meta charset="utf-8">
+    <title>SPS PEGA UI</title>
+	<link rel="stylesheet" href="/bootstrap.min.css" />
+	<script src="js/jquery-3.4.1.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/angular.min.js"></script>
+    <script src="js/angular-cookies.min.js"></script>
+	<script src="js/app-ui.js"></script>
+  </head>
+  <body ng-controller="FetchData" >
+	<nav class="navbar navbar-expand-sm navbar-light bg-light main-nav fixed-top p-1" id="banner">
+	<div class="container">
+	  <!-- Brand -->
+	  <img src="/SPS PEGA UI/assests/logo.svg" class="media-object" style="width:15%">
+	  <h4 class="media-heading">SPS PEGA</h4>
+	  <p>Logged in as {{ username }}. <a href ng-click="logout()">logout</a></p>
+	</div>
+	</nav>
+
+	<section id="statustable">
+	<div class="container py-5" >
+	<h2 class="text-secondary">SPS PEGA Deployment Status</h2>
+	<div class="text-danger" ng-repeat="errorRow in error">{{ errorRow }}</div>
+	<div class="text-info" ng-repeat="infoRow in info">
+	<a href="{{ infoRow.link }}" target="_blank" ng-if="infoRow.link">{{ infoRow.text }}</a>
+	<div ng-if="!infoRow.link">{{ infoRow.text }}</div>
+	</div>
+	<div class="text-default" ng-repeat="debugRow in debug" ng-if="debug == 1">{{ debug }}</div>
+	<table class="table table-hover table-responsive-sm p-0 m-0" >
+	<thead class="thead-dark">
+	  <tr class="p-0 m-0">
+		<th scope="col">Module</th>
+		<th ng-repeat-start="env in environments" scope="col" class="text-uppercase">{{ env }}</th>
+		<th ng-repeat-end scope="col" ng-hide="$last"></th>
+	  </tr>
+	  </thead>
+	  <tbody ng-repeat="project in tableData">
+		
+	  <tr class="table-secondary" >
+	
+		<th scope="row" class="text-default">{{ project.name }}</th>
+		<td ng-repeat-start="env in environments" ng-hide="$first"><button type="button" class="btn btn-sm btn-outline-dark btn-block py-0 my-0" style="font-size:larger;">&#10140;&#10140;</button></td>
+		<td ng-repeat-end></td>
+	  </tr>
+	  <tr ng-repeat="row in project.rowData">
+		<th scope="row"><div class="checkbox"><label><input type="checkbox" value=""><span class="m-2">{{ row.name }}</span></label></div></th>
+		<td ng-repeat-start="env in row.envData" ng-hide="$first"><button type="button" class="btn btn-sm btn-outline-dark btn-block py-0 my-0" style="font-size:larger;" ng-click="promotetoEnv(project.projectId, row.module, environments[$index-1], env)">&#10140;</button></td>
+		<td ng-repeat-end> 
+			<span class="text-danger" ng-if="env.deployStatus == 'FAILED'">&#x2B24;</span> 
+			<span class="text-success" ng-if="env.deployStatus == 'SUCCESS'">&#x2B24;</span>
+			<span class="text-info" ng-if="env.deployStatus == 'UNKNOWN'">&#x2B24;</span>
+			<a href="https://bamboo.anthem.com/deploy/viewDeploymentResult.action?deploymentResultId={{ env.deployResultId }}" target="_blank">{{ env.deployVersion }}</a></td>
+	  </tr>
+	  </tbody>
+	</table>
+
+
+	
+	</div>
+	</section>
+	<div class="page-footer text-sm-center text-secondary fixed-bottom bg-light">
+		<small>This is for demonstration only. Security Note: Passwords stored in cookies and should be cleaned-up manually.</small>
+	</div>
+  </body>
+</html>
