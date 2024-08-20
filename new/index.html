@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>SPS PEGA UI</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/new/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-sm navbar-light bg-light fixed-top">
+        <div class="container">
+            <img src="/SPS PEGA UI/assests/logo.svg" class="media-object" style="width: 15%;">
+            <h4 class="ml-3">SPS PEGA</h4>
+            <p class="ml-auto">Logged in as AL11858. <a href="#">Logout</a></p>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <h2>SPS PEGA Deployment Status</h2>
+
+        <!-- Status Table -->
+        <table class="table table-hover table-responsive-md">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Module</th>
+                    <th scope="col">Artifactory</th>
+                    <th scope="col">Dev</th>
+                    <th scope="col">Sit</th>
+                    <th scope="col">Prod</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Module 1 -->
+                <tr class="table-secondary">
+                    <th scope="row">Module 1</th>
+                    <td class="arrow-container"><button type="button" class="arrow-btn btn" onclick="triggerPlan('dev')">&#10140;</button><span id="dev-status-1"></span></td>
+                    <td class="arrow-container"><button type="button" class="arrow-btn btn" onclick="triggerPlan('sit')">&#10140;</button><span id="sit-status-1"></span></td>
+                    <td class="arrow-container"><button type="button" class="arrow-btn btn" onclick="triggerPlan('prod')">&#10140;</button><span id="prod-status-1"></span></td>
+                    <td class="arrow-container"></td>
+                </tr>
+                <!-- More rows as needed -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <!-- <footer>
+        <small>This is for demonstration only. Security Note: Passwords stored in cookies should be cleaned-up manually.</small>
+    </footer> -->
+
+    <script>
+        async function triggerPlan(environment) {
+            const statusSpan = document.getElementById(`${environment}-status-1`);
+            statusSpan.textContent = ''; // Clear previous status
+            try {
+                const response = await fetch('/trigger-bamboo', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    statusSpan.innerHTML = '<button class="btn btn-success">Success</button>';
+                } else {
+                    statusSpan.innerHTML = '<button class="btn btn-danger">Failed</button>';
+                }
+            } catch (error) {
+                console.error('Error triggering Bamboo plan:', error);
+                statusSpan.innerHTML = '<button class="btn btn-danger">Failed</button>';
+            }
+        }
+    </script>
+</body>
+</html>
